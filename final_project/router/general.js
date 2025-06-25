@@ -35,21 +35,18 @@ public_users.get('/isbn/:isbn',function (req, res) {
 public_users.get('/author/:author',function (req, res) {
     // Extract author from request parameters
     const author = req.params.author;
-    // Filter books
-    const filtered_books = books.filter((book) => book.author === author);
 
-    if() {
-
-    }
-    if(filtered_books.length == 1)
-    // If there is only one book with a matching author, send its data
-    res.send(filtered_books);
-    else {
-        // If there are several books with a mtching author, send each of their data as a formatted string
-        res.send(JSON.stringify(filtered_books, null, 4))
-    }
+    for (const isbn in books) {
+        // For each book, check if the author matches the requested author
+        if (books[isbn].author === author) {
+            // Send the data of the first book with a matching author and return
+            res.send(books[isbn]);
+            return;
+        }
     }
 
+    // If no books with a matching author are found, show error message
+    res.status(403).json({message: "No books with that author"});
 });
 
 // Get all books based on title

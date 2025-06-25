@@ -1,22 +1,8 @@
 const express = require('express');
 let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
+let doesUsernameExist = require("./auth_users.js").doesUsernameExist;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-
-// Function to check if username already exists or not
-const doesUsernameExist = (username) => {
-    // Filter the users array for any user with the same username
-    let userswithsamename = users.filter((user) => {
-        return user.username === username;
-    });
-    // Return true if any user with the same username is found, otherwise false
-    if (userswithsamename.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 public_users.post("/register", (req,res) => {
     // Extract username and password from body of request
@@ -112,7 +98,7 @@ public_users.get('/review/:isbn',function (req, res) {
 
     if(book) {
         // If book is valid, send reviews data for said book
-        res.send(books[isbn].reviews);
+        res.send(JSON.stringify(books[isbn].reviews, null, 4));
     }
     else {
         // Otherwise, send error message

@@ -82,6 +82,28 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     }
 });
 
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    // Extract isbn from request parameters and username from session
+    const isbn = req.params.isbn;
+    const username = req.session.authorisation["username"];
+
+    // Get reviews section of book in question
+    let reviews = books[isbn].reviews;
+
+    if (reviews) {
+        // If reviews exists, the isbn is valid, so delete the review made by the current user
+        delete reviews[username];
+        books[isbn].reviews = reviews;
+        return res.status(200).json({message: "Review has been deleted"});
+    }
+
+    else {
+        // If book isbn is not valid, send error message
+        return res.status(403).json({message: "Not a valid ISBN"});
+    }
+});
+
 module.exports.authenticated = regd_users;
 module.exports.doesUsernameExist = doesUsernameExist;
 module.exports.users = users;
